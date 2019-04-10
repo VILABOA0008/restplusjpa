@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 
 import Entities.Departament;
 import Entities.Employee;
+import Entities.Proyects;
 
 
 
@@ -26,6 +27,23 @@ final static String EMP="employ";
     dep.setBoss(emp);
     
     save(dep);
+  }
+  
+  public  void asignEmployeeToProyect(int id_pro,int id_emp){
+
+    EntityManagerFactory emf=Persistence.createEntityManagerFactory("employ");
+    EntityManager em=emf.createEntityManager();     
+    
+
+    Employee e=em.find(Employee.class,id_emp);
+        Proyects p=em.find(Proyects.class, id_pro);
+    
+        em.getTransaction().begin();
+      
+        e.getProy().add(p);
+        em.getTransaction().commit();
+        
+    System.out.println(p.getEmployee());
   }
   
   public void asignEmployee(int id_employee,int id_dep) {

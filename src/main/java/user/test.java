@@ -1,5 +1,6 @@
 package user;
 
+//ONLY FOR TESTING
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,8 +16,8 @@ import Entities.Proyects;
 public class test {
   public static void main(String args[]) {
 
-
-    testing();
+projectcosts(4);
+    //testing();
      // createemployee(); 
       //listdeps();
       //System.out.println("sdsdsdsdsdsdsd");      
@@ -24,27 +25,41 @@ public class test {
     
   }
   
-  public static void testing(){
-    Methods m=new Methods();
+  public static void projectcosts(int id_pro) {
+    
     EntityManagerFactory emf=Persistence.createEntityManagerFactory("employ");
     EntityManager em=emf.createEntityManager();     
     
-    /*
-    Departament d=em.find(Departament.class, 1);
-    Proyects p=new Proyects("1 things",d);
-        Employee e=new Employee("66",2,3);
-    Proyects p=new Proyects("66",d);
-    m.save(p);
-    */
-    Employee e=em.find(Employee.class,87);
-        Proyects p=em.find(Proyects.class, 5);
+    TypedQuery<Employee> query = em.createQuery("SELECT p FROM Employee p", Employee.class);
+    List<Employee> emps = query.getResultList();
     
-        em.getTransaction().begin();
+    Proyects p=em.find(Proyects.class,id_pro);
+    
+    //LAMBDA WORKING NOT IMPLEMENTED
+    double sal=emps
+        .stream()
+        .filter(a->a.getProy().contains(p))
+        .mapToDouble(Employee::getSalary)
+        .sum();
 
-        p.getEmployee().add(e);
-        em.getTransaction().commit();
-        
-    System.out.println(p.getEmployee());
+
+
+    
+  }
+  
+  
+  public static void testing(){
+    Methods m=new Methods();
+    
+   
+    
+    
+    // m.asignEmployeeToProyect(4, 87);
+    
+    
+    EntityManagerFactory emf=Persistence.createEntityManagerFactory("employ");
+    EntityManager em=emf.createEntityManager();     
+   
   }
   
   
