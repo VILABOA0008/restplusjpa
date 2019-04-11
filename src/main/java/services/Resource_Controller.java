@@ -15,7 +15,11 @@ import javax.ws.rs.core.Response;
 
 import Entities.Departament;
 import Entities.Employee;
-import user.Methods;
+import methods.Assign;
+import methods.Create;
+import methods.Lists;
+import methods.Methods;
+import methods.others;
   
 @Path("/serv")
 public class Resource_Controller{
@@ -36,7 +40,7 @@ public class Resource_Controller{
     public String createEmployee(@FormParam("name") String name,@FormParam("age") 
             int age,@FormParam("salary") float salary) {
 
-      int id= m.createEmployee(name, age, salary);
+      int id= Create.createEmployee(name, age, salary);
       String output="Employee: "+name+"  whith id  "+id+" has been created";      
       
       return output;
@@ -51,7 +55,7 @@ public class Resource_Controller{
 
       
       
-      m.asignEmployee(id_emp, id_dep);
+      Assign.asignEmployee(id_emp, id_dep);
       String output="Employee "+id_emp+" has been asigned to "+id_dep;
       return "<html> " + "<title>" + "Hello Jersey" + "</title>"  + "<body><h1>" + output + "</h1></body>" + "</html> "; 
       
@@ -61,7 +65,7 @@ public class Resource_Controller{
     @Path("/dept/create")
     public String createDepartament(@FormParam("name") String name) {
 
-      int id= m.creaateDepartament(name);
+      int id= Create.creaateDepartament(name);
       String output="Departament "+name+"  whith id  "+id+" has been created";      
       
       return output;
@@ -72,7 +76,7 @@ public class Resource_Controller{
     public String alldepartaments(){
       
       String output="";
-      List<Departament> results=m.listAllDepartaments();
+      List<Departament> results=Lists.listAllDepartaments();
       
       for(Departament dep:results) {
         output+="\n Id:"+dep.getId_dep()+"  Name:"+dep.getName();
@@ -83,24 +87,26 @@ public class Resource_Controller{
     }
     
     @GET
+    @Produces(MediaType.TEXT_HTML) 
     @Path("/emp/listall")
     public String allEmployees(){
       
       String output="";
-      List<Employee> results=m.listallEmployees();
-      
-      for(Employee emp:results) {
-        output+="Id:"+emp.getId()+"  Name:"+emp.getName()+"  Age:"+emp.getAge()+"  salary:"+emp.getSalary()+"\n";        
-      }
+      List<Employee> results=Lists.listallEmployees();
+      String title="<table style=\"width:100%\" border=\" 1px solid black \"><tr><th>ID</th><th>NAME</th><th>AGE</th><th>SALARY</th>  </tr>";
+      for(Employee emp:results) {       
+        output+="<tr><td>"+emp.getId()+"</td><td>"+emp.getName()+"</td><td>"+emp.getAge()+"</td><td>"+emp.getSalary()+"</td>  </tr>";
 
-      return output;
+      }
+      return "<html> " + "<title>" + "Hello Jersey" + "</title>"  + "<body><h1>" + title+output + "</table></h1></body>" + "</html> "; 
+      
     }
     
     @GET
     @Path("dep/findbyid/")
     public String finddepartament(@QueryParam("id") int id){
       
-      Departament e=m.findDepart(id);
+      Departament e=(Departament) others.find(id, 'd');
     String output = "Id:"+e.getId_dep()+"  Name:"+e.getName();
       if (e.getBoss()!=null) {output+="  Boss name:"+e.getBoss().getName();}
           
@@ -112,7 +118,7 @@ public class Resource_Controller{
     @Path("emp/findbyid/")
     public String findemployee(@QueryParam("id") int id){
       
-      Employee e=m.findEmpl(id);
+      Employee e=(Employee) others.find(id, 'e');
       String  output="USER \nId:"+e.getId()+"  Name:"+e.getName()+"  Age:"+e.getAge()+"  salary:"+e.getSalary();
           
       return output;
